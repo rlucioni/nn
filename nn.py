@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy as np
 
 
@@ -54,15 +55,15 @@ class NeuralNetwork:
 
     def train(self, training_input, training_output, epochs):
         for epoch in range(epochs):
-            print(f'epoch: {epoch}')
-            print(f'normalized input: {training_input}')
-            print(f'target output: {training_output}')
+            print(f'epoch {epoch}')
+            print(f'normalized input\n{training_input}')
+            print(f'target output\n{training_output}')
 
             self.epoch(training_input, training_output)
-            print(f'output sum: {self.output_sum}')
+            print(f'output sum\n{self.output_sum}')
 
             mse = self.mean_squared_error(training_output, self.output_sum)
-            print(f'mse: {mse}')
+            print(f'mse: {mse}\n')
 
     def test(self, test_input):
         print(f'normalized input: {test_input}')
@@ -75,34 +76,40 @@ class NeuralNetwork:
     #     np.savetxt('w2.txt', self.W2, fmt='%s')
 
 
-# hours studied, hours slept
-training_input = np.array(
-    (
-        [2, 9],
-        [1, 5],
-        [3, 6],
-    ),
-    dtype=float
-)
+if __name__ == '__main__':
+    # hours studied, hours slept
+    training_input = np.array(
+        (
+            [2, 9],
+            [1, 5],
+            [3, 6],
+        ),
+        dtype=float
+    )
 
-# exam score
-training_output = np.array(
-    (
-        [92],
-        [86],
-        [89],
-    ),
-    dtype=float
-)
+    # exam score
+    training_output = np.array(
+        (
+            [92],
+            [86],
+            [89],
+        ),
+        dtype=float
+    )
 
-# Normalize units by dividing by the maximum value for each variable.
-# Inputs are in hours, outputs are exam scores out of 100.
-normalized_input = training_input / np.amax(training_input, axis=0)
-normalized_output = training_output / 100
+    # Normalize units by dividing by the maximum value for each variable.
+    # Inputs are in hours, outputs are exam scores out of 100.
+    normalized_input = training_input / np.amax(training_input, axis=0)
+    normalized_output = training_output / 100
 
-nn = NeuralNetwork()
-nn.train(normalized_input, normalized_output, 10)
+    nn = NeuralNetwork()
+    nn.train(normalized_input, normalized_output, 10)
 
-test_input = np.array(([4, 8]), dtype=float)
-normalized_test_input = test_input / np.amax(test_input, axis=0)
-nn.test(normalized_test_input)
+    test_input = np.array(
+        (
+            [4, 8],
+        ),
+        dtype=float
+    )
+    normalized_test_input = test_input / np.amax(test_input, axis=0)
+    nn.test(normalized_test_input)
