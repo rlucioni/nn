@@ -9,21 +9,24 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
 
+def load_mnist():
+    # mnist.train: 55k points of training data
+    # mnist.test: 10k points of test data
+    # mnist.validation: 5k points of validation data
+    return input_data.read_data_sets('mnist_data/', one_hot=True)
+
+
 class ModelBase:
     path = None
 
-    def __init__(self, learning_rate=0.5):
+    def __init__(self, mnist):
+        self.mnist = mnist
+
         init_op = tf.global_variables_initializer()
         self.saver = tf.train.Saver()
 
         self.sess = tf.Session()
         self.sess.run(init_op)
-
-    def load(self):
-        # mnist.train: 55k points of training data
-        # mnist.test: 10k points of test data
-        # mnist.validation: 5k points of validation data
-        return input_data.read_data_sets('mnist_data/', one_hot=True)
 
     def train(self, steps=1000, batch_size=100):
         pass
@@ -57,9 +60,7 @@ class BadModel(ModelBase):
     """
     path = 'learned/bad_model'
 
-    def __init__(self, learning_rate=0.5):
-        self.mnist = self.load()
-
+    def __init__(self, mnist, learning_rate=0.5):
         # placeholder for flattened 28x28 = 784 pixel intensity vectors
         self.x = tf.placeholder(tf.float32, shape=[None, 784])
 
@@ -89,7 +90,7 @@ class BadModel(ModelBase):
         # determine fraction of correct predictions
         self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
 
-        super().__init__()
+        super().__init__(mnist)
 
     def train(self, steps=1000, batch_size=100):
         for step in range(steps):
@@ -134,9 +135,7 @@ class GoodModel(ModelBase):
     """
     path = 'learned/good_model'
 
-    def __init__(self, learning_rate=1e-3):
-        self.mnist = self.load()
-
+    def __init__(self, mnist, learning_rate=1e-3):
         self.x = tf.placeholder(tf.float32, shape=[None, 784])
         self.y_ = tf.placeholder(tf.float32, shape=[None, 10])
 
@@ -177,7 +176,7 @@ class GoodModel(ModelBase):
 
         self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
 
-        super().__init__()
+        super().__init__(mnist)
 
     def weight_var(self, shape):
         initial = tf.truncated_normal(shape, stddev=0.1)
@@ -240,5 +239,6 @@ class GoodModel(ModelBase):
 
 
 if __name__ == '__main__':
-    bad = BadModel()
-    good = GoodModel()
+    mnist = load_mnist()
+    bad = BadModel(mnist)
+    good = GoodModel(mnist)

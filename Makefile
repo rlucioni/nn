@@ -11,5 +11,5 @@ lint: ## run flake8
 requirements: ## install requirements
 	pip install -r requirements.txt
 
-run: ## run tf and drop into interactive mode
+run: ## init models and drop into interactive mode
 	python -i nn.py
