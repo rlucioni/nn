@@ -10,6 +10,3 @@ lint: ## run flake8
 
 requirements: ## install requirements
 	pip install -r requirements.txt
-
-run: ## run tf
-	TF_CPP_MIN_LOG_LEVEL=2 python nn.py
