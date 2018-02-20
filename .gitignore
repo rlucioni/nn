@@ -4,5 +4,5 @@ __pycache__/
 # pyenv
 .python-version
 
+# macOS
 .DS_Store
-mnist_data/
