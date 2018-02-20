@@ -10,12 +10,14 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 
 class ModelBase:
+    path = None
+
     def __init__(self, learning_rate=0.5):
-        # define and run variable init operation
-        init = tf.global_variables_initializer()
+        init_op = tf.global_variables_initializer()
+        self.saver = tf.train.Saver()
 
         self.sess = tf.Session()
-        self.sess.run(init)
+        self.sess.run(init_op)
 
     def load(self):
         # mnist.train: 55k points of training data
@@ -37,11 +39,24 @@ class ModelBase:
 
         return number
 
+    def save(self):
+        # https://www.tensorflow.org/programmers_guide/saved_model
+        self.saver.save(self.sess, self.path)
+
+        print(f'model written to {self.path}')
+
+    def restore(self):
+        self.saver.restore(self.sess, self.path)
+
+        print(f'model read from {self.path}')
+
 
 class BadModel(ModelBase):
     """
     https://www.tensorflow.org/versions/r0.12/tutorials/mnist/beginners/
     """
+    path = 'learned/bad_model'
+
     def __init__(self, learning_rate=0.5):
         self.mnist = self.load()
 
@@ -117,6 +132,8 @@ class GoodModel(ModelBase):
     """
     https://www.tensorflow.org/versions/r0.12/tutorials/mnist/pros/
     """
+    path = 'learned/good_model'
+
     def __init__(self, learning_rate=1e-3):
         self.mnist = self.load()
 
@@ -220,3 +237,8 @@ class GoodModel(ModelBase):
         predicted = self.sess.run(self.predicted_labels, feed_dict=feed_dict)
 
         print(f'predicted {predicted[0]}')
+
+
+if __name__ == '__main__':
+    bad = BadModel()
+    good = GoodModel()
